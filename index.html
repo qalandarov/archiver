@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Archiver</title>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+
+<body>
+  <div class="container">
+    <h1 class="mt-4 mb-4">Archiver</h1>
+    <div class="row justify-content-center">
+      <div class="col-sm-8">
+        <input type="text" class="form-control" id="urlInput" placeholder="Enter URL">
+        <div id="validationResult" class="mt-4"></div>
+      </div>
+      <div class="col-sm-2">
+        <button class="btn btn-primary btn-block" onclick="processLink()">Archive</button>
+      </div>
+    </div>
+    <div id="output" class="mt-4"></div>
+  </div>
+
+  <div class="fixed-bottom bg-light">
+    <p class="text-muted mt-2">Disclaimer: You are responsible for ensuring that you have the rights to download the
+      content of the URL you are placing.</p>
+  </div>
+
+  <script async src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.5/jszip.min.js"></script>
+  <script async src="script.js"></script>
+</body>
+
+</html>
