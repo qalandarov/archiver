@@ -23,6 +23,7 @@ async function processLink(event) {
     console.error("Unable to fetch the tweet: ", error);
   } finally {
     hideSpinner();
+    document.getElementById('progress-bar').value = 0;
   }
 }
 
@@ -52,17 +53,42 @@ async function fetchTweet(url) {
   return null;
 }
 
-async function download(link) {
-  try {
-    const response = await fetch(link);
-    blob = await response.blob();
-    if (blob !== null) {
-      return { name: encodeURIComponent(link.split("?")[0]), content: blob }
+async function download(urls) {
+  const progressBar = document.getElementById('progress-bar');
+
+  const contentLengths = await Promise.all(urls.map(url => getContentLength(url)));
+  const totalContentLength = contentLengths.reduce((total, length) => total + length, 0);
+
+  let totalDownloaded = 0;
+  const files = [];
+
+  const downloadPromises = urls.map(async (url, index) => {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const trackedResponse = trackProgress(response, downloaded => {
+        progress = downloaded * contentLengths[index];
+        const percentage = ((totalDownloaded + progress) / totalContentLength * 100).toFixed(2);
+        progressBar.value = percentage;
+      }, contentLengths[index]);
+
+      const blob = await trackedResponse.blob();
+      totalDownloaded += contentLengths[index];
+      filename = encodeURIComponent(url.split("?")[0])
+      files.push({ name: filename, content: blob });
+    } catch (error) {
+      console.error(`Error during download for ${url}:`, error);
+      const validationResult = document.getElementById('validationResult');
+      validationResult.innerHTML = "<p class='text-danger'>Some of the files didn't download. Please check the console</p>";
     }
-  } catch (error) {
-    console.error('Error downloading file:', error.message);
-  }
-  return null;
+  });
+
+  await Promise.all(downloadPromises);
+  progressBar.value = 100;
+  return files;
 }
 
 async function downloadMultipleFiles(tweet) {
@@ -70,21 +96,11 @@ async function downloadMultipleFiles(tweet) {
     { name: tweet.id + ".json", content: JSON.stringify(tweet, null, 2) },
     { name: tweet.id + ".txt",  content: tweet.text }
   ];
-
   if (tweet.lang !== "en" && tweet.translation) {
     files.push({ name: tweet.id + "-en.txt", content: tweet.translation.text })
   }
-
-  files.push(await download(tweet.author.avatar_url))
-  const allMedia = tweet.media && tweet.media.all
-  for (const media of (allMedia ?? [])) {
-    files.push(await download(media.url))
-    if (media.type === "video") {
-      files.push(await download(media.thumbnail_url))
-    }
-  }
-
-  return files
+  const mediaFiles = await download(getMediaLinks(tweet));
+  return [...files, ...mediaFiles];
 }
 
 async function zip(files, downloadFilename) {
@@ -112,12 +128,61 @@ async function zip(files, downloadFilename) {
   window.URL.revokeObjectURL(url);
 }
 
+async function getContentLength(url) {
+  const response = await fetch(url, { method: 'HEAD' });
+  if (response.ok) {
+    const contentLength = response.headers.get('Content-Length');
+    return contentLength ? parseInt(contentLength, 10) : 0;
+  } else {
+    throw new Error(`HTTP error! Status: ${response.status}`);
+  }
+}
+
+function getMediaLinks(tweet) {
+  mediaLinks = [tweet.author.avatar_url]
+  const allMedia = tweet.media && tweet.media.all
+  for (const media of (allMedia ?? [])) {
+    mediaLinks.push(media.url)
+    if (media.type === "video") {
+      mediaLinks.push(media.thumbnail_url)
+    }
+  }
+  return mediaLinks
+}
+
+function trackProgress(response, onProgress, totalContentLength) {
+  let downloaded = 0;
+  return new Response(
+    new ReadableStream({
+      async start(controller) {
+        const reader = response.body.getReader();
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) {
+            controller.close();
+            break;
+          }
+          downloaded += value.byteLength;
+          onProgress(downloaded / totalContentLength);
+          controller.enqueue(value);
+        }
+      },
+    })
+  );
+}
+
 function showSpinner() {
   const spinnerContainer = document.getElementById('spinner-container');
   spinnerContainer.style.display = 'flex';
+
+  const progressContainer = document.getElementById('progress-container');
+  progressContainer.style.display = 'flex';
 }
 
 function hideSpinner() {
   const spinnerContainer = document.getElementById('spinner-container');
   spinnerContainer.style.display = 'none';
+
+  const progressContainer = document.getElementById('progress-container');
+  progressContainer.style.display = 'none';
 }
