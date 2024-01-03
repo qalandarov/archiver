@@ -10,13 +10,20 @@ async function processLink(event) {
     return;
   }
 
-  const tweet = await fetchTweet(url);
-  if (tweet === null) {
-    validationResult.innerHTML = '<p class="text-danger">Unable to fetch the tweet</p>';
-    return;
-  }
+  showSpinner();
 
-  await archive(tweet);
+  try {
+    const tweet = await fetchTweet(url);
+    if (tweet === null) {
+      validationResult.innerHTML = '<p class="text-danger">Unable to fetch the tweet</p>';
+    } else {
+      await archive(tweet);
+    }
+  } catch(error) {
+    console.error("Unable to fetch the tweet: ", error);
+  } finally {
+    hideSpinner();
+  }
 }
 
 async function archive(tweet) {
@@ -103,4 +110,14 @@ async function zip(files, downloadFilename) {
   a.click();
   document.body.removeChild(a);
   window.URL.revokeObjectURL(url);
+}
+
+function showSpinner() {
+  const spinnerContainer = document.getElementById('spinner-container');
+  spinnerContainer.style.display = 'flex';
+}
+
+function hideSpinner() {
+  const spinnerContainer = document.getElementById('spinner-container');
+  spinnerContainer.style.display = 'none';
 }
