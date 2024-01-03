@@ -10,7 +10,7 @@
   <link rel="stylesheet" type="text/css" href="spinner.css">
 </head>
 
-<body>
+<body class="align-items-center">
   <div class="spinner-container" id="spinner-container">
     <div class="spinner"></div>
   </div>
@@ -20,7 +20,7 @@
     <form onsubmit="processLink(event)">
       <div class="row justify-content-center">
         <div class="col-sm-9">
-          <input type="text" class="form-control" id="urlInput" placeholder="Enter URL">
+          <input type="url" class="form-control" id="urlInput" placeholder="Enter URL">
           <div class="progress-container" id="progress-container">
             <progress id="progress-bar" value="0" max="100"></progress>
           </div>
