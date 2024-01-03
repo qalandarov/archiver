@@ -7,10 +7,6 @@ body {
   min-height: 100vh;
 }
 
-#output {
-  margin-top: 20px;
-}
-
 .container {
   flex: 1;
 }

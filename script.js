@@ -1,4 +1,6 @@
-async function processLink() {
+async function processLink(event) {
+  event.preventDefault();
+
   const validationResult = document.getElementById('validationResult');
   validationResult.innerHTML = "";
 
