@@ -2,9 +2,35 @@
 <html lang="en">
 
 <head>
+  <title>Tweet Archiver</title>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Archiver</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Archive and organize tweets for future reference.">
+  <meta name="keywords" content="tweet archiver, tweet downloader, Twitter, social media, data preservation">
+  <meta name="robots" content="index, follow">
+
+  <meta name="og:title" content="Tweet Archiver">
+  <meta name="og:description" content="Archive and organize tweets for future reference.">
+  <meta name="og:image" content="https://qalandarov.github.io/archiver/img/banner.jpg">
+  <meta name="og:url" content="https://qalandarov.github.io/archiver/">
+  <meta name="og:type" content="website">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Tweet Archiver">
+  <meta name="twitter:description" content="Archive and organize tweets for future reference.">
+  <meta name="twitter:image" content="https://qalandarov.github.io/archiver/img/banner.jpg">
+
+  <!-- Icon taken from https://www.flaticon.com/free-icon/archive_2001114 -->
+  <meta name="theme-color" content="#ffffff">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="styles.css">
   <link rel="stylesheet" type="text/css" href="spinner.css">
@@ -16,11 +42,11 @@
   </div>
 
   <div class="container">
-    <h1 class="mt-4 mb-4">Archiver</h1>
+    <h1 class="mt-4 mb-4">Tweeter Archiver</h1>
     <form onsubmit="processLink(event)">
       <div class="row justify-content-center">
         <div class="col-sm-9">
-          <input type="url" class="form-control" id="urlInput" placeholder="Enter URL">
+          <input type="url" class="form-control" id="urlInput" placeholder="Tweet URL">
           <div class="progress-container" id="progress-container">
             <progress id="progress-bar" value="0" max="100"></progress>
           </div>
